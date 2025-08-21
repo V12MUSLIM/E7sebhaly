@@ -4,7 +4,7 @@ export default function BudgetInput({ totalBudget, onBudgetChange }) {
     <>
       <div className="card">
         <div className="section-header">
-        <DollarSign className="icon green" size={24} />
+        <DollarSign className="icon-green" size={24} />
         <h2>Set your budget</h2>
       </div>
       <div className="input-group">
