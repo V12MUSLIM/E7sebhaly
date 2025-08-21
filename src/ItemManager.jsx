@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
+import Switch from '@mui/material/Switch';
 
 export default function ItemManager({ items, onAddItem, onRemoveItem }) {
   const [itemName, setItemName] = useState("");
   const [itemCost, setItemCost] = useState("");
-
+  const [vatEnabled, setVatEnabled] = useState(false);
   function handleAddItem() {
     if (itemName.trim() && itemCost.trim() && !isNaN(parseFloat(itemCost))) {
       const newItem = {
@@ -24,6 +25,15 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
     }
   };
 
+  const handleVatSwitch = (e) => {
+    setVatEnabled(e.target.checked);
+    if (e.target.checked && itemCost.trim() && !isNaN(parseFloat(itemCost))) {
+      const cost = parseFloat(itemCost);
+      const Tax = cost + (cost * 0.14);
+      setItemCost(Tax.toFixed(2));
+    }
+  };
+
   return (
     <>
       <div className="card">
@@ -31,7 +41,6 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
           <Plus className="icon-blue" size={24} />
           <h2>Add Budget Items</h2>
         </div>
-        
         <div className="input-group">
           <div className="input-flex">
             <input
@@ -52,6 +61,14 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
               onKeyPress={handleKeyPress}
               className="input"
             />
+          </div>
+          <div className="switch-fixed">
+            <span className="alert">VAT. is an additional 14% of your original price.</span>
+            <Switch
+              checked={vatEnabled}
+              onChange={handleVatSwitch}
+            />
+            <span>VAT</span>
           </div>
           <button onClick={handleAddItem} className="btn-primary">
             <Plus size={20} />
