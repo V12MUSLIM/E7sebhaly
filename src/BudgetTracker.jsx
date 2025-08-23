@@ -26,6 +26,8 @@ const BudgetTracker = () => {
     setItems(prevItems => prevItems.filter(item => item.id !== itemId));
   };
 
+  
+
   return (
     <>
       <Hero />

@@ -33,8 +33,8 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
       handleAddItem();
     }
   };
-
-  const handleCostChange = (e) => {
+  
+   const handleCostChange = (e) => {
     const value = e.target.value;
     
     if (vatEnabled) {
@@ -53,6 +53,9 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
       setBasePrice(value);
     }
   };
+
+
+
 
   const handleVatSwitch = (e) => {
     const isChecked = e.target.checked;
