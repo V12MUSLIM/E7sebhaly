@@ -2,6 +2,7 @@ import  { useState } from "react";
 import BudgetInput from "./BudgetInput";
 import ItemManager from "./ItemManager";
 import BudgetSummary from "./BudgetSummary";
+import Hero from "./Hero";
 import ReportDownloader from "./ReportDownloader";
 import "./BudgetTracker.css";
 
@@ -26,8 +27,10 @@ const BudgetTracker = () => {
   };
 
   return (
-    <div className="budget-tracker">
-      <div className="container">
+    <>
+      <Hero />
+      <div className="budget-tracker">
+        <div className="container">
 
         <BudgetInput 
           totalBudget={totalBudget}
@@ -54,6 +57,7 @@ const BudgetTracker = () => {
         />
       </div>
     </div>
+    </>
   );
 };
 
