@@ -2,25 +2,29 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import Switch from '@mui/material/Switch';
 
-
 export default function ItemManager({ items, onAddItem, onRemoveItem }) {
   const [itemName, setItemName] = useState("");
   const [itemCost, setItemCost] = useState("");
   const [itemCategory, setCategory] = useState("");
   const [vatEnabled, setVatEnabled] = useState(false);
+  const [basePrice, setBasePrice] = useState(""); // Store original price
+
   function handleAddItem() {
     if (itemName.trim() && itemCost.trim() && itemCategory.trim() && !isNaN(parseFloat(itemCost))) {
+      const cost = vatEnabled ? parseFloat(basePrice) * 1.14 : parseFloat(itemCost);
       const newItem = {
         id: Date.now(),
         name: itemName.trim(),
         category: itemCategory.trim(),
-        cost: parseFloat(itemCost),
-        
+        cost: cost,
+        hasVat: vatEnabled // Store whether VAT was applied
       };
       onAddItem(newItem);
       setItemName("");
       setItemCost("");
       setCategory("");
+      setBasePrice("");
+      setVatEnabled(false);
     }
   }
 
@@ -30,12 +34,40 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
     }
   };
 
+  const handleCostChange = (e) => {
+    const value = e.target.value;
+    
+    if (vatEnabled) {
+      // When VAT is enabled, treat input as base price and show VAT-inclusive price
+      setBasePrice(value);
+      if (value && !isNaN(parseFloat(value))) {
+        const cost = parseFloat(value);
+        const withVat = cost * 1.14;
+        setItemCost(withVat.toFixed(2));
+      } else {
+        setItemCost(value);
+      }
+    } else {
+      // When VAT is disabled, input value is the actual cost
+      setItemCost(value);
+      setBasePrice(value);
+    }
+  };
+
   const handleVatSwitch = (e) => {
-    setVatEnabled(e.target.checked);
-    if (e.target.checked && itemCost.trim() && !isNaN(parseFloat(itemCost))) {
-      const cost = parseFloat(itemCost);
-      const Tax = cost + (cost * 0.14);
-      setItemCost(Tax.toFixed(2));
+    const isChecked = e.target.checked;
+    setVatEnabled(isChecked);
+    
+    if (basePrice && !isNaN(parseFloat(basePrice))) {
+      const cost = parseFloat(basePrice);
+      if (isChecked) {
+        // Add VAT
+        const withVat = cost * 1.14;
+        setItemCost(withVat.toFixed(2));
+      } else {
+        // Remove VAT - revert to base price
+        setItemCost(basePrice);
+      }
     }
   };
 
@@ -57,39 +89,39 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
               className="input"
             />
           </div>
-            <div className="input-group">
-          <div className="input-flex">
-            <input
-              type="text"
-              placeholder="Item's category..."
-              value={itemCategory}
-              onChange={(e) => setCategory(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="input"
-            />
-          </div>
-          <div className="input-fixed">
-            <input
-              type="number"
-              placeholder="Cost..."
-              value={itemCost}
-              onChange={(e) => setItemCost(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="input"
-            />
-          </div>
-          <div className="switch-fixed">
-            <span className="alert">VAT. is an additional 14% of your original price.</span>
-            <Switch
-              checked={vatEnabled}
-              onChange={handleVatSwitch}
-            />
-            <span>VAT</span>
-          </div>
-          <button onClick={handleAddItem} className="btn-primary">
-            <Plus size={20} />
-            Add
-          </button>
+          <div className="input-group">
+            <div className="input-flex">
+              <input
+                type="text"
+                placeholder="Item's category..."
+                value={itemCategory}
+                onChange={(e) => setCategory(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="input"
+              />
+            </div>
+            <div className="input-fixed">
+              <input
+                type="number"
+                placeholder="Cost..."
+                value={itemCost}
+                onChange={handleCostChange}
+                onKeyPress={handleKeyPress}
+                className="input"
+              />
+            </div>
+            <div className="switch-fixed">
+              <span className="alert">VAT. is an additional 14% of your original price.</span>
+              <Switch
+                checked={vatEnabled}
+                onChange={handleVatSwitch}
+              />
+              <span>VAT</span>
+            </div>
+            <button onClick={handleAddItem} className="btn-primary">
+              <Plus size={20} />
+              Add
+            </button>
           </div>
         </div>
       </div>
@@ -108,7 +140,10 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
                 <div className="item-name">{item.name}</div>
                 <div className="item-category">{item.category}</div>
                 <div className="item-actions">
-                  <span className="item-cost">${item.cost.toFixed(2)}</span>
+                  <span className="item-cost">
+                    ${item.cost.toFixed(2)}
+                    {item.hasVat && <span className="vat-indicator"> (incl. VAT)</span>}
+                  </span>
                   <button
                     onClick={() => onRemoveItem(item.id)}
                     className="btn-danger"
