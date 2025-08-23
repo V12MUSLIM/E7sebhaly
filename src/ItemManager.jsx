@@ -2,20 +2,25 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import Switch from '@mui/material/Switch';
 
+
 export default function ItemManager({ items, onAddItem, onRemoveItem }) {
   const [itemName, setItemName] = useState("");
   const [itemCost, setItemCost] = useState("");
+  const [itemCategory, setCategory] = useState("");
   const [vatEnabled, setVatEnabled] = useState(false);
   function handleAddItem() {
-    if (itemName.trim() && itemCost.trim() && !isNaN(parseFloat(itemCost))) {
+    if (itemName.trim() && itemCost.trim() && itemCategory.trim() && !isNaN(parseFloat(itemCost))) {
       const newItem = {
         id: Date.now(),
         name: itemName.trim(),
+        category: itemCategory.trim(),
         cost: parseFloat(itemCost),
+        
       };
       onAddItem(newItem);
       setItemName("");
       setItemCost("");
+      setCategory("");
     }
   }
 
@@ -52,6 +57,17 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
               className="input"
             />
           </div>
+            <div className="input-group">
+          <div className="input-flex">
+            <input
+              type="text"
+              placeholder="Item's category..."
+              value={itemCategory}
+              onChange={(e) => setCategory(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="input"
+            />
+          </div>
           <div className="input-fixed">
             <input
               type="number"
@@ -74,6 +90,7 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
             <Plus size={20} />
             Add
           </button>
+          </div>
         </div>
       </div>
 
@@ -89,6 +106,7 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
             {items.map((item) => (
               <div key={item.id} className="item">
                 <div className="item-name">{item.name}</div>
+                <div className="item-category">{item.category}</div>
                 <div className="item-actions">
                   <span className="item-cost">${item.cost.toFixed(2)}</span>
                   <button
