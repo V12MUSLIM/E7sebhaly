@@ -1,4 +1,3 @@
-
 import { Download } from "lucide-react";
 
 const ReportDownloader = ({ totalBudget, items, totalSpent, remaining }) => {
@@ -11,7 +10,7 @@ const ReportDownloader = ({ totalBudget, items, totalSpent, remaining }) => {
           <style>
             body {
               font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-              max-width: 800px;
+              max-width: 900px;
               margin: 0 auto;
               padding: 20px;
               color: #333;
@@ -93,6 +92,21 @@ const ReportDownloader = ({ totalBudget, items, totalSpent, remaining }) => {
               font-weight: 600;
               color: #059669;
             }
+            .category {
+              color: #6b7280;
+              font-style: italic;
+            }
+            .vat-indicator {
+              display: inline-block;
+              background: #fbbf24;
+              color: #92400e;
+              font-size: 11px;
+              padding: 2px 6px;
+              border-radius: 12px;
+              margin-left: 8px;
+              font-weight: bold;
+              text-transform: uppercase;
+            }
             .total-row {
               font-weight: bold;
               background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%) !important;
@@ -119,10 +133,39 @@ const ReportDownloader = ({ totalBudget, items, totalSpent, remaining }) => {
               padding-top: 20px;
               font-size: 14px;
             }
+            .item-name {
+              font-weight: 500;
+              color: #111827;
+              margin-bottom: 4px;
+            }
+            .category-summary {
+              margin-bottom: 30px;
+              background: white;
+              border-radius: 10px;
+              padding: 20px;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .category-summary h3 {
+              margin-top: 0;
+              color: #374151;
+              border-bottom: 2px solid #e5e7eb;
+              padding-bottom: 10px;
+            }
+            .category-item {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 8px 0;
+              border-bottom: 1px solid #f3f4f6;
+            }
+            .category-item:last-child {
+              border-bottom: none;
+            }
             @media print {
               body { margin: 0; padding: 15px; }
               .summary { break-inside: avoid; }
               .items-table { break-inside: avoid; }
+              .category-summary { break-inside: avoid; }
             }
           </style>
         </head>
@@ -154,25 +197,58 @@ const ReportDownloader = ({ totalBudget, items, totalSpent, remaining }) => {
             </div>
           </div>
 
+          ${items.length > 0 ? (() => {
+            // Group items by category
+            const categoryTotals = items.reduce((acc, item) => {
+              const category = item.category || 'Uncategorized';
+              if (!acc[category]) {
+                acc[category] = { total: 0, count: 0, hasVat: false };
+              }
+              acc[category].total += item.cost;
+              acc[category].count += 1;
+              if (item.hasVat) acc[category].hasVat = true;
+              return acc;
+            }, {});
+
+            return `
+              <div class="category-summary">
+                <h3>📂 Spending by Category</h3>
+                ${Object.entries(categoryTotals).map(([category, data]) => `
+                  <div class="category-item">
+                    <span><strong>${category}</strong> (${data.count} item${data.count !== 1 ? 's' : ''})</span>
+                    <span>$${data.total.toFixed(2)}</span>
+                  </div>
+                `).join('')}
+              </div>
+            `;
+          })() : ''}
+
           <div class="items-section">
-            <h2>🛍️ Budget Items</h2>
+            <h2>🛍 Budget Items</h2>
             ${items.length > 0 ? `
               <table class="items-table">
                 <thead>
                   <tr>
-                    <th style="width: 60%">Item Name</th>
-                    <th style="width: 40%" class="cost">Cost</th>
+                    <th style="width: 45%">Item Name</th>
+                    <th style="width: 25%">Category</th>
+                    <th style="width: 30%" class="cost">Cost</th>
                   </tr>
                 </thead>
                 <tbody>
                   ${items.map((item, index) => `
                     <tr>
-                      <td>${index + 1}. ${item.name}</td>
-                      <td class="cost">$${item.cost.toFixed(2)}</td>
+                      <td>
+                        <div class="item-name">${index + 1}. ${item.name}</div>
+                      </td>
+                      <td class="category">${item.category || 'Uncategorized'}</td>
+                      <td class="cost">
+                        $${item.cost.toFixed(2)}
+                        ${item.hasVat ? '<span class="vat-indicator">VAT</span>' : ''}
+                      </td>
                     </tr>
                   `).join('')}
                   <tr class="total-row">
-                    <td><strong>Total (${items.length} items)</strong></td>
+                    <td colspan="2"><strong>Total (${items.length} items)</strong></td>
                     <td class="cost"><strong>$${totalSpent.toFixed(2)}</strong></td>
                   </tr>
                 </tbody>
@@ -187,6 +263,7 @@ const ReportDownloader = ({ totalBudget, items, totalSpent, remaining }) => {
           <div class="footer">
             <p>This report was generated by Budget Tracker App</p>
             <p>💡 Tip: Use your browser's print function to save this as a PDF</p>
+            ${items.some(item => item.hasVat) ? '<p>⚠ Items marked with VAT include 14% tax</p>' : ''}
           </div>
         </body>
       </html>
