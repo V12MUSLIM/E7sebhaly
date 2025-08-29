@@ -110,9 +110,10 @@ const BudgetTracker = () => {
   return (
     
       <ThemeProvider>
-        <Hero />
+        
         <div className="budget-tracker">
           <div className="container">
+            <Hero />
             <ThemeToggle />
 
             <BudgetInput 
