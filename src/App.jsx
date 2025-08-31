@@ -1,13 +1,12 @@
 import "./App.css";
 import BudgetTracker from "./BudgetTracker";
+import ThemeProvider from "./ThemeProvider";
 
 function App() {
   return (
-    <>
-      <div>
-        <BudgetTracker />
-      </div>
-    </>
+    <ThemeProvider>
+      <BudgetTracker />
+    </ThemeProvider>
   );
 }
 

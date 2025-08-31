@@ -79,12 +79,7 @@ const BudgetTracker = () => {
       >
         <FormControlLabel
           control={
-            <MaterialUISwitch
-              sx={{ m: 1 }}
-              defaultChecked
-              checked={dark}
-              onChange={toggle}
-            />
+            <MaterialUISwitch sx={{ m: 1 }} checked={dark} onChange={toggle} />
           }
           label="Theme Mode"
         />
@@ -108,46 +103,42 @@ const BudgetTracker = () => {
   };
 
   return (
-    
-      <ThemeProvider>
-        
-        <div className="budget-tracker">
-          <div className="container">
-            <Hero />
-            <ThemeToggle />
+    <div className="budget-tracker">
+      <div className="container">
+        <Hero />
+        <ThemeToggle />
 
-            <BudgetInput 
-              totalBudget={totalBudget}
-              onBudgetChange={handleBudgetChange}
-            />
+        <BudgetInput
+          totalBudget={totalBudget}
+          onBudgetChange={handleBudgetChange}
+        />
 
-          <ItemManager
-            items={items}
-            onAddItem={handleAddItem}
-            onRemoveItem={handleRemoveItem}
-          />
+        <ItemManager
+          items={items}
+          onAddItem={handleAddItem}
+          onRemoveItem={handleRemoveItem}
+        />
 
-          <BudgetSummary
-            totalBudget={totalBudget}
-            totalSpent={totalSpent}
-            remaining={remaining}
-          />
+        <BudgetSummary
+          totalBudget={totalBudget}
+          totalSpent={totalSpent}
+          remaining={remaining}
+        />
 
-          <ReportDownloader
-            totalBudget={totalBudget}
-            items={items}
-            totalSpent={totalSpent}
-            remaining={remaining}
-          />
-          <ExcelExporter
-            totalBudget={totalBudget}
-            items={items}
-            totalSpent={totalSpent}
-            remaining={remaining}
-          />
-        </div>
+        <ReportDownloader
+          totalBudget={totalBudget}
+          items={items}
+          totalSpent={totalSpent}
+          remaining={remaining}
+        />
+        <ExcelExporter
+          totalBudget={totalBudget}
+          items={items}
+          totalSpent={totalSpent}
+          remaining={remaining}
+        />
       </div>
-    </ThemeProvider>
+    </div>
   );
 };
 

@@ -74,6 +74,21 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
     }
   };
 
+  const [categories, setCategories] = useState([
+    "Food", "Electronics", "Bills", "Entertainment", "Other"
+  ]);
+  const [showCustomCategory, setShowCustomCategory] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+
+  const handleAddCategory = () => {
+    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
+      setCategories([...categories, newCategory.trim()]);
+      setNewCategory("");
+      setShowCustomCategory(false);
+      setCategory(newCategory.trim());
+    }
+  };
+
   return (
     <>
       <div className="card">
@@ -94,14 +109,39 @@ export default function ItemManager({ items, onAddItem, onRemoveItem }) {
           </div>
           <div className="input-group">
             <div className="input-flex">
-              <input
-                type="text"
-                placeholder="Item's category..."
-                value={itemCategory}
-                onChange={(e) => setCategory(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="input"
-              />
+              {!showCustomCategory ? (
+                <>
+                  <select
+                    value={itemCategory}
+                    onChange={(e) => {
+                      if (e.target.value === "add_new") {
+                        setShowCustomCategory(true);
+                      } else {
+                        setCategory(e.target.value);
+                      }
+                    }}
+                    className="input"
+                  >
+                    <option value="">Select Category...</option>
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                    <option value="add_new">+ Add New Category</option>
+                  </select>
+                </>
+              ) : (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input
+                    type="text"
+                    placeholder="New category..."
+                    value={newCategory}
+                    onChange={(e) => setNewCategory(e.target.value)}
+                    className="input"
+                  />
+                  <button onClick={handleAddCategory} className="btn-primary">Add</button>
+                  <button onClick={() => setShowCustomCategory(false)} className="btn-danger">Cancel</button>
+                </div>
+              )}
             </div>
             <div className="input-fixed">
               <input

@@ -1,6 +1,6 @@
 import "./BudgetTracker.css";
 import logo from "./assets/logo.png"; 
-import { useTheme } from "./ThemeProvider"; // إضافة استيراد useTheme
+import { useTheme } from "./ThemeProvider";
 
 export default function Hero() {
   const { dark } = useTheme(); // الحصول على حالة الثيم

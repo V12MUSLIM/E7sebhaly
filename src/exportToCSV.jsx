@@ -1,8 +1,10 @@
 import { Download, FileSpreadsheet } from "lucide-react";
 import * as XLSX from 'xlsx';
+import { useState } from 'react';
 
 const ExcelExporter = ({ totalBudget, items, totalSpent, remaining }) => {
-  
+  const [isExporting, setIsExporting] = useState(false);
+
   const generateExcelFile = () => {
     const workbook = XLSX.utils.book_new();
 
@@ -131,7 +133,8 @@ const ExcelExporter = ({ totalBudget, items, totalSpent, remaining }) => {
     return workbook;
   };
 
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
+    setIsExporting(true);
     try {
       const workbook = generateExcelFile();
       const timestamp = new Date().toISOString().split('T')[0];
@@ -148,10 +151,13 @@ const ExcelExporter = ({ totalBudget, items, totalSpent, remaining }) => {
     } catch (error) {
       console.error('Excel export error:', error);
       alert('Failed to generate Excel file. Please try again or use CSV export as alternative.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
-  const exportToCSV = () => {
+  const exportToCSV = async () => {
+    setIsExporting(true);
     try {
       // Generate CSV data manually for better control
       let csvContent = '';
@@ -197,6 +203,8 @@ const ExcelExporter = ({ totalBudget, items, totalSpent, remaining }) => {
     } catch (error) {
       console.error('CSV export error:', error);
       alert('Failed to generate CSV file. Please try again.');
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -224,8 +232,11 @@ const ExcelExporter = ({ totalBudget, items, totalSpent, remaining }) => {
           style={{
             background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
             flex: '1',
-            minWidth: '200px'
+            minWidth: '200px',
+            cursor: isExporting ? 'not-allowed' : 'pointer',
+            opacity: isExporting ? 0.7 : 1,
           }}
+          disabled={isExporting}
         >
           <FileSpreadsheet size={20} />
           Export to Excel (.xlsx)
@@ -243,13 +254,15 @@ const ExcelExporter = ({ totalBudget, items, totalSpent, remaining }) => {
             color: 'white',
             border: 'none',
             borderRadius: '1rem',
-            cursor: 'pointer',
+            cursor: isExporting ? 'not-allowed' : 'pointer',
             fontWeight: '600',
             fontSize: '1rem',
             transition: 'all 0.3s ease',
             flex: '1',
-            minWidth: '200px'
+            minWidth: '200px',
+            opacity: isExporting ? 0.7 : 1,
           }}
+          disabled={isExporting}
         >
           <Download size={20} />
           Export to CSV
