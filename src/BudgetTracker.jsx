@@ -108,15 +108,18 @@ const BudgetTracker = () => {
   };
 
   return (
-    <ThemeProvider>
-      <div className="budget-tracker">
-        <div className="container">
-          <ThemeToggle />
-          <Hero />
-          <BudgetInput
-            totalBudget={totalBudget}
-            onBudgetChange={handleBudgetChange}
-          />
+    
+      <ThemeProvider>
+        
+        <div className="budget-tracker">
+          <div className="container">
+            <Hero />
+            <ThemeToggle />
+
+            <BudgetInput 
+              totalBudget={totalBudget}
+              onBudgetChange={handleBudgetChange}
+            />
 
           <ItemManager
             items={items}
