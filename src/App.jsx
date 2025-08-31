@@ -4,10 +4,8 @@ import BudgetTracker from "./BudgetTracker";
 function App() {
   return (
     <>
-    
       <div>
-        
-        <BudgetTracker/>
+        <BudgetTracker />
       </div>
     </>
   );
